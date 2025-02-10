@@ -93,5 +93,5 @@ COOKIES_ENABLED = False
 # Set settings whose default value is deprecated to a future-proof value
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-DEPTH_LIMIT = 3  # to adjust after surveying the websites
+DEPTH_LIMIT = 1  # to adjust after surveying the websites
 LOG_LEVEL = "INFO"
