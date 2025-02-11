@@ -1,16 +1,17 @@
+# Importing relevant libraries
 import re
 import scrapy
 
-from beta_scrapper.items import ScrapeURL
-from scrapy.crawler import CrawlerProcess
+from beta_scrapper.items import ScrapeURL # -- refer https://stackoverflow.com/questions/51159487/scrapy-throws-modulenotfounderror-upon-execution
+# from scrapy.crawler import CrawlerProcess    # -- use this only when want to activate scrapy from script
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from w3lib.url import url_query_cleaner
 
 # This is the list of URL extensions that will be ignored by link extractor, to edit accordingly.
-# For this use case, remove jpg and jpeg
+# For this use case, remove jpg, jpeg, gif, png
 ignored_extensions = ['7z', '7zip', 'bz2', 'rar', 'tar', 'tar.gz', 'xz', 'zip', 'mng', 'pct',
-                      'bmp', 'gif', 'png', 'pst', 'psp', 'tif', 'tiff', 'ai',
+                      'bmp', 'pst', 'psp', 'tif', 'tiff', 'ai',
                       'drw', 'dxf', 'eps', 'ps', 'svg', 'cdr', 'ico', 'mp3', 'wma', 'ogg', 'wav', 
                       'ra', 'aac', 'mid', 'au', 'aiff', '3gp', 'asf', 'asx', 'avi', 'mov', 'mp4', 
                       'mpg', 'qt', 'rm', 'swf', 'wmv', 'm4a', 'm4v', 'flv', 'webm', 'xls', 'xlsx',
@@ -55,16 +56,13 @@ class CrawlingSpider(CrawlSpider):
         else:
             pass
 
+# activate the following if want to run scrapy from script
+# process = CrawlerProcess(settings={"FEEDS": {
+#            "items.json": {"format": "json",
+#                           "encoding": "utf8"},
+#            },
+#            }
+#            )
 
-# process = CrawlerProcess(
-#    settings={
-#        "FEEDS": {
-#            "items.json": {"format": "json"},
-#        },
-#    }
-# )
-
-# process.crawl(MySpider)
+# process.crawl(CrawlingSpider, delay=1)
 # process.start()
-
-# Need to set the depth limit
