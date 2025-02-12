@@ -12,4 +12,4 @@ class BetaScrapperItem(scrapy.Item):
     pass
 
 class ScrapeURL(scrapy.Item):
-    url = scrapy.Field()
+    URL = scrapy.Field()
