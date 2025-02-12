@@ -44,7 +44,7 @@ class CrawlingSpider(CrawlSpider):
 
     def parse_item(self, response):
         item = ScrapeURL()
-        item["url"] = response.url  # response.meta["link_text"]
+        item["URL"] = response.url  # response.meta["link_text"]
         return item
 
     def process_link(self, links):
