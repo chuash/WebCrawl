@@ -42,3 +42,38 @@ async def scrape(playwright: Playwright) -> None:
 
         except (Exception, BaseException) as e:
             print(f"Error scraping {link['url']}: {e}")
+
+
+async def main() -> None:
+    async with async_playwright() as playwright:
+        await get_page_links(playwright)
+        await scrape(playwright)
+        await analyse(playwright)
+
+        ## To reset the link csv file for debugging
+        # await reset_links_csv(playwright)
+
+asyncio.run(main())
+
+
+async def get_screenshot(context, url):
+    page = await context.new_page()
+    await page.goto(url, wait_until='networkidle')  # -- can also use 'domcontentload' or 'load'
+    await page.screenshot(path=os.path.join(screenshot_folder, f"{(url)}_Full_Screenshot.png"), full_page=True)
+    print(f"Screenshot of {(url)} taken")
+    page.close
+
+async def access_pages(context, urls):      # stop here
+    async with asyncio.TaskGroup() as tg:
+        for url in urls:
+            task = tg.create_task(
+                get_detail(context, url)
+            )    
+    
+async def main(urls):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False)
+        context = await browser.new_context()
+        await open_new_pages(context, urls)
+
+asyncio.run(main(urls))
