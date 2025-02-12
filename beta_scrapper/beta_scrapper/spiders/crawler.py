@@ -1,8 +1,5 @@
 # Importing relevant libraries
-import re
-import scrapy
-
-from beta_scrapper.items import ScrapeURL # -- refer https://stackoverflow.com/questions/51159487/scrapy-throws-modulenotfounderror-upon-execution
+from beta_scrapper.items import ScrapeURL  # -- refer https://stackoverflow.com/questions/51159487/scrapy-throws-modulenotfounderror-upon-execution
 # from scrapy.crawler import CrawlerProcess    # -- use this only when want to activate scrapy from script
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
@@ -24,7 +21,7 @@ class CrawlingSpider(CrawlSpider):
     def __init__(self, delay=0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Setting the download delay at spider level instead of at global level. Crawler to wait delay sec between requests
-        self.download_delay = int(delay)  # set to >0 sec if necessary to further throttle
+        self.download_delay = float(delay)  # set to >0 sec if necessary to further throttle
 
     name = "CCCSspider"
     allowed_domains = ["sgcarmart.com", "i.i-sgcm.com"]  # "toscrape.com"
@@ -66,3 +63,5 @@ class CrawlingSpider(CrawlSpider):
 
 # process.crawl(CrawlingSpider, delay=1)
 # process.start()
+
+# scrapy runspider crawler.py -o ..\sgcarmartlinks.jsonl 
