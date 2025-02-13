@@ -27,5 +27,6 @@ dist/
 
 # Files
 *.json
-*.jsonl
-*.csv
+#*.jsonl
+#*.csv
+#*.png

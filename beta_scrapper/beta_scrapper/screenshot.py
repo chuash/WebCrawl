@@ -3,7 +3,7 @@ import asyncio
 import csv
 import json
 import os
-from playwright.async_api import Playwright, async_playwright
+from playwright.async_api import async_playwright, Playwright
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -26,36 +26,36 @@ links_filename = "sgcarmartlinks.jsonl"   # -- to amend this filename accordingl
 with open(links_filename, mode='r') as f:
     links = [json.loads(line) for line in f]
 # Appending "Done" key to each dict in the list of dicts
-[dict.update({"Done": "No"}) for dict in links]
+[dict.update({"Done": "No", "URL_Number": str(i)}) for i, dict in enumerate(links, start=1)]
 
-print(links)
-print()
 
 async def get_screenshot(context, link):
 
     # navigate to the relevant url and wait till page is fully loaded
     page = await context.new_page()
-    await page.goto(link["URL"], wait_until='networkidle')  # -- can also use 'domcontentload' or 'load'
+    await page.goto(link['URL'], wait_until='domcontentloaded')
 
     # Save the screenshot of the entire page, then close the page
-    await page.screenshot(path=os.path.join(screenshot_folderpath, f"{link['URL']}_Full_Screenshot.png"), full_page=True)
-    page.close()
+    await page.screenshot(path=os.path.join(screenshot_folderpath, f"URL_{link['URL_Number']}_screenshot.png"), full_page=True)
+    await page.close()
 
     # Update the Done status
     link["Done"] = "Yes"
 
     # Update the completed links csv file
     with open(completed_links_filepath, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=["URL", "Done"])
+        writer = csv.DictWriter(file, fieldnames=["URL", "Done", "URL_Number"])
         writer.writerow(link)
 
-    print(f"Screenshot of {(link['URL'])} taken")
+    print(f"Screenshot of ({link['URL']}) taken and record updated")
 
 
 async def main(links):
+
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(headless=True)
         context = await browser.new_context()
+
         # create all tasks
         tasks = [asyncio.create_task(get_screenshot(context, link)) for link in links if link["Done"] == "No"]
         # wait for each task to complete
@@ -64,6 +64,8 @@ async def main(links):
                 await task
             except (Exception, BaseException) as e:
                 print(f"Failed with: {e}")
+
+        await browser.close()
 
 if __name__ == '__main__':
     asyncio.run(main(links))
